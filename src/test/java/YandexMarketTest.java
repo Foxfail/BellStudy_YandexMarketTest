@@ -26,6 +26,7 @@ public class YandexMarketTest {
         System.out.println("Загружено");
         driver.manage().window().maximize(); // разворачиваем окно
         System.out.println();
+        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
     }
 
     @Before
@@ -83,7 +84,7 @@ public class YandexMarketTest {
         // 8.      Нажать кнопку Применить.
         System.out.println("8.      Нажать кнопку Применить.");
         // Нет такой кнопки, просто ждем пока прогрузится наш выбор
-        Thread.sleep(10000);
+        Thread.sleep(10000); // implicitywait не поможет и дальше вылетит ошибка
 
 
         // 9.      Проверить, что элементов на странице 12.
@@ -197,7 +198,6 @@ public class YandexMarketTest {
     // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
     private WebElement findWebElementByXpath(String xpath) {
         WebElement webElement;
-        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
         webElement = driver.findElement(By.xpath(xpath));
         return webElement;
     }
@@ -206,7 +206,6 @@ public class YandexMarketTest {
     @SuppressWarnings("SameParameterValue")
     private List<WebElement> findWebElementsByXpath(String xpath) {
         List<WebElement> webElementList;
-        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
         webElementList = driver.findElements(By.xpath(xpath));
         return webElementList;
     }
