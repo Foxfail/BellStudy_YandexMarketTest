@@ -128,18 +128,24 @@
         <dependency>
             <groupId>ru.yandex.qatools.allure</groupId>
             <artifactId>allure-junit-adaptor</artifactId>
-            <!--<version>1.4.0</version>-->
             <version>1.5.4</version>
             <scope>test</scope>
         </dependency>
 
 
-        <!--SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder"-->
+        <!--fix for: SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder"-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.6.2</version>
             <scope>test</scope>
+        </dependency>
+
+        <!--fix for: com.sun.istack.internal does not exist-->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>13.0</version>
         </dependency>
 
     </dependencies>

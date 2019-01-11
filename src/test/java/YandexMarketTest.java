@@ -1,4 +1,4 @@
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
