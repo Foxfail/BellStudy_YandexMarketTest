@@ -29,7 +29,6 @@ public class YandexMarketTest {
         // 2.      Зайти на yandex.ru.
         System.out.println("2.      Зайти на yandex.ru.");
         driver.get("https://yandex.ru/"); // идем на яндекс
-
     }
 
     @AfterClass
@@ -45,97 +44,108 @@ public class YandexMarketTest {
     }
 
     @Test
-    public void test1() {
+    public void test1() throws InterruptedException {
+        List<WebElement> goodsList; // в этом списке будут хранится карточки товаров
+
+
         // 3.      Перейти в яндекс маркет
         System.out.println("3.      Перейти в яндекс маркет");
-        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS); // ждем прогрузки
-        driver.findElement(By.linkText("Маркет")).click(); // жмем на маркет
+        findWebElementByXpath("//a[contains(text(), 'Маркет')]").click();
+
 
         // 4.      Выбрать раздел Компьютеры
         System.out.println("4.      Выбрать раздел Компьютеры");
-        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        driver.findElement(By.linkText("Компьютерная техника")).click();
+        findWebElementByXpath("//a[contains(span, 'Компьютерная техника')]").click();
+
 
         // 5.      Выбрать раздел Ноутбуки
         System.out.println("5.      Выбрать раздел Ноутбуки");
-        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        driver.findElement(By.linkText("Ноутбуки")).click();
+        findWebElementByXpath("//a[contains(text(), 'Ноутбуки')]").click();
+
 
         // 6.      Задать параметр поиска до 30000 рублей.
         System.out.println("6.      Задать параметр поиска до 30000 рублей.");
-        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        driver.findElement(By.id("glpriceto")).sendKeys("30000");
+        findWebElementByXpath("//input[contains(@name, 'Цена до')]").sendKeys("30000");
+
 
         // 7.      Выбрать производителя HP и Lenovo
-        //TODO выдает ошибку
-//        System.out.println("7.      Выбрать производителя HP и Lenovo");
-//        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-//        driver.findElement(By.linkText("HP")).click();
-//        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-//        driver.findElement(By.linkText("Lenovo")).click();
+        System.out.println("7.      Выбрать производителя HP и Lenovo");
+        findWebElementByXpath("//div[contains(span, 'HP')]").click();
+        findWebElementByXpath("//div[contains(span, 'Lenovo')]").click();
+
 
         // 8.      Нажать кнопку Применить.
-        // Нет такой кнопки
+        System.out.println("8.      Нажать кнопку Применить.");
+        // Нет такой кнопки, просто ждем пока прогрузится наш выбор
+        Thread.sleep(10000);
+
 
         // 9.      Проверить, что элементов на странице 12.
         System.out.println("9.      Проверить, что элементов на странице 12.");
-        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        // TODO убрать в функцию
-        // получим список всех отображенных товаров
-        List<WebElement> cardList = driver.findElements(By.xpath(
-                "//div[contains(@data-id, 'model-')]"
-//                "n-snippet-card2 i-bem b-zone b-spy-visible b-spy-visible_js_inited b-zone_js_inited n-snippet-card2_js_inited"
-        ));
+        goodsList = getGoodsList(); // получим список всех отображенных товаров
         // проверяем что элементов 12, а если не 12 то выставляем 12 в настройках
-        System.out.println("\tЭлементов на странице: " + cardList.size());
-        if (cardList.size() != 12) {
-            //TODO выдает ошибку
-//            // на форме два селекта с одинаковыми атрибутами, поэтому будем искать по родителю, у которого они уникальны
-//            driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-//            Thread.sleep(5000);
-//            WebElement select_size_span = driver.findElement(By.xpath("//span[contains(@class, 'select select_size_')]"));
-//            Select select_size_select = new Select(select_size_span.findElement(By.xpath(".//select")));
-//            driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-//
-////            select_size_span.findElement(By.xpath(".//select")).click();
-//            select_size_select.selectByVisibleText("Показывать по 12");
-//            driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-//            driver.findElement(By.xpath("//span[contains(text()='Показывать по 12')]")).click();
+        System.out.println("\tЭлементов на странице: " + goodsList.size());
+        if (goodsList.size() != 12) {
+            //сначала щелкаем на выпадающий список чтобы появились элементы этого списка
+            WebElement select_size_span = driver.findElement(By.xpath("//span[contains(@class, 'select select_size_')]"));
+            select_size_span.click();
+
+            //затем ищем элемент выпадающего списка "показывать по 12"
+            WebElement dropdown_element = findWebElementByXpath("//span[(contains(@class, 'select__text')) and text()='Показывать по 12']");
+            dropdown_element.click();
+
+            Thread.sleep(10000); // ждем пока прогрузятся товары
+
+            goodsList = getGoodsList(); // получим список всех отображенных товаров
+            System.out.println("\tЭлементов на странице теперь: " + goodsList.size()); // должно быть 12
         }
+
 
         // 10.  Запомнить первый элемент в списке.
         System.out.println("10.  Запомнить первый элемент в списке.");
-        // TODO убрать в функцию
-        // получим список всех отображенных товаров
-        cardList = driver.findElements(By.xpath(
-                "//div[contains(@data-id, 'model-')]"
-//                "n-snippet-card2 i-bem b-zone b-spy-visible b-spy-visible_js_inited b-zone_js_inited n-snippet-card2_js_inited"
-        ));
-        WebElement firstElement = cardList.get(0); // запоминаем первую карточку
+//        goodsList = getGoodsList(); // получим список всех отображенных товаров // уже получали до этого
+        WebElement firstElement = goodsList.get(0); // запоминаем первую карточку товара
+
 
         // 11.  В поисковую строку ввести запомненное значение.
         System.out.println("11.  В поисковую строку ввести запомненное значение.");
-        WebElement title_a = firstElement.findElement(By.xpath(".//div[contains(@class, 'title')]/a"));
-        String itemTitle = title_a.getText(); // получаем текст из первой карточки товара
+        // получаем название товара
+        WebElement title_link = firstElement.findElement(By.xpath(".//div[contains(@class, 'title')]/a"));
+        String itemTitle = title_link.getText();
         System.out.println("\tПервый элемент: " + itemTitle);
+        // вводим его в поиск
         driver.findElement(By.xpath("//input[@id = 'header-search']")).sendKeys(itemTitle);
+
 
         // 12.  Найти и проверить, что наименование товара соответствует запомненному значению.
         System.out.println("12.  Найти и проверить, что наименование товара соответствует запомненному значению.");
-        driver.findElement(By.xpath("//button[contains(@class, 'button2')]")).click(); // найти
-        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        // TODO убрать в функцию
-        // получим список всех отображенных товаров
-        cardList = driver.findElements(By.xpath(
-                "//div[contains(@data-id, 'model-')]"
-//                "n-snippet-card2 i-bem b-zone b-spy-visible b-spy-visible_js_inited b-zone_js_inited n-snippet-card2_js_inited"
-        ));
-        firstElement = cardList.get(0); // запоминаем первую карточку
-        title_a = firstElement.findElement(By.xpath(".//div[contains(@class, 'title')]/a"));
-        if (itemTitle.equals(title_a.getText())) {
+        findWebElementByXpath("//button[contains(@class, 'button2')]").click(); // щелкаем найти
+        goodsList = getGoodsList(); // получаем результаты поиска
+        firstElement = goodsList.get(0); // запоминаем первую карточку
+        title_link = firstElement.findElement(By.xpath(".//div[contains(@class, 'title')]/a"));
+        if (itemTitle.equals(title_link.getText())) { // сверяем названия
             System.out.println("\t Наименование товара соответствует запомненному значению");
         } else {
             System.out.println("\t Error. Наименование товара не соответствует запомненному значению");
         }
+    }
+
+    private WebElement findWebElementByXpath(String xpath) {
+        WebElement webElement;
+        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+        webElement = driver.findElement(By.xpath(xpath));
+        return webElement;
+    }
+
+    private List<WebElement> findWebElementsByXpath(String xpath) {
+        List<WebElement> webElementList;
+        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+        webElementList = driver.findElements(By.xpath(xpath));
+        return webElementList;
+    }
+
+    // получим список всех отображенных товаров
+    private List<WebElement> getGoodsList() {
+        return findWebElementsByXpath("//div[contains(@data-id, 'model-')]");
     }
 }
