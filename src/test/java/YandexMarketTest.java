@@ -9,6 +9,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 
 public class YandexMarketTest {
 
@@ -26,7 +28,9 @@ public class YandexMarketTest {
         System.out.println("Загружено");
         driver.manage().window().maximize(); // разворачиваем окно
         System.out.println();
-        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+//        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+        driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
     }
 
     @Before
@@ -67,8 +71,18 @@ public class YandexMarketTest {
         List<WebElement> goodsList; // в этом списке будут хранится карточки товаров
 
         // 5.      Выбрать раздел Ноутбуки
+
         System.out.println("5.      Выбрать раздел Ноутбуки");
-        findWebElementByXpath("//a[contains(text(), 'Ноутбуки')]").click();
+        boolean done = false;
+        while (done == false) {
+            try {
+                Thread.sleep(1000);
+                findWebElementByXpath("//a[contains(text(), 'Ноутбуки')]").click();
+                done = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
 
         // 6.      Задать параметр поиска до 30000 рублей.
@@ -186,7 +200,7 @@ public class YandexMarketTest {
         findWebElementByXpath("//button[contains(@class, 'button2')]").click(); // щелкаем найти
         goodsList = getGoodsList(); // получаем результаты поиска
         firstElement = goodsList.get(0); // запоминаем первую карточку
-        title_link = firstElement.findElement(By.xpath(".//div[contains(@class, 'title')]/a"));
+        title_link = firstElement.findElement(By.xpath("//div[contains(@class, 'n-snippet-card2__title')]/a"));
         if (itemTitle.equals(title_link.getText())) { // сверяем названия
             System.out.println("  Наименование товара соответствует запомненному значению");
         } else {
